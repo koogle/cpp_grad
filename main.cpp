@@ -19,7 +19,7 @@ int main(int _argc, char **_argv)
     auto first_layer = Layer(28 * 28, relu);
     auto second_layer = Layer(15, relu);
     auto third_layer = Layer(15, relu);
-    auto output_layer = Layer(12, relu);
+    auto output_layer = Layer(12, softmax);
 
     second_layer.fully_connect(first_layer);
     third_layer.fully_connect(second_layer);

@@ -1,4 +1,6 @@
 #include <vector>
+#include <cmath>
+#include <algorithm>
 #include "layer.h"
 
 Layer::Layer(int size, LayerType type)
@@ -19,7 +21,7 @@ std::vector<Neuron *> Layer::get_neurons()
 
 void Layer::fully_connect(Layer previous)
 {
-    for (auto neuron : this->neurons)
+    for (auto neuron: this->neurons)
     {
         neuron->create_connections(previous.get_neurons());
     }
@@ -28,10 +30,27 @@ void Layer::fully_connect(Layer previous)
 std::vector<double> Layer::activate_all_neurons()
 {
     std::vector<double> result;
-    for (auto neuron : this->neurons)
+    for (auto neuron: this->neurons)
     {
         result.push_back(neuron->activation());
     }
+    
+    if (this->type == softmax) {
+        double sum = 0.0;
+        double max_value = 0.0;
+        for (auto value:result) {
+            max_value = std::max(value, 0.0);
+        }
+
+        for (auto value: result) {
+            sum += exp(value/max_value);
+        }
+
+        for (int index = 0; index < result.size(); index++) {
+            result[index] = exp(result.at(index)/max_value) / sum;
+        }
+    }
+
     return result;
 }
 

@@ -8,7 +8,6 @@ enum LayerType {
     relu,
     softmax 
 };
-
 class Layer {
     private:
         int size;
