@@ -3,26 +3,7 @@
 #include "printing.cc"
 #include "data_loading.cc"
 #include "neuron.cc"
-
-std::vector<Neuron *> create_layer(int size)
-{
-    std::vector<Neuron *> layer;
-    for (int index = 0; index < size; index++)
-    {
-        Neuron *n = new Neuron();
-        n->set_bias(1.0);
-        layer.push_back(n);
-    }
-    return layer;
-}
-
-void fully_connect(std::vector<Neuron *> left, std::vector<Neuron *> right)
-{
-    for (auto neuron: right)
-    {
-        neuron->create_connections(left);
-    }
-}
+#include "layer.cc"
 
 int main(int _argc, char **_argv)
 {
@@ -35,25 +16,29 @@ int main(int _argc, char **_argv)
     print_random_image(total_count, training_labels, training_images);
 
     // Create input layer of the network
-    auto first_layer = create_layer(28 * 28);
-    auto second_layer = create_layer(15);
-    auto third_layer = create_layer(15);
-    auto output_layer = create_layer(10);
+    auto first_layer = Layer(28 * 28, relu);
+    auto second_layer = Layer(15, relu);
+    auto third_layer = Layer(15, relu);
+    auto output_layer = Layer(12, relu);
 
-    fully_connect(first_layer, second_layer);
-    fully_connect(second_layer, third_layer);
-    fully_connect(third_layer, output_layer);
+    second_layer.fully_connect(first_layer);
+    third_layer.fully_connect(second_layer);
+    output_layer.fully_connect(third_layer);
 
     uint8_t *test_values = training_images[20];
+    std::vector<double> values;
     for (int index = 0; index < 28 * 28; index++)
     {
-        std::cout << "fixing " << (double) test_values[index] << std::endl;
-        first_layer.at(index)->fix_value(test_values[index]);
+        std::cout << "fixing " << (double)test_values[index] << std::endl;
+        values.push_back(test_values[index]);
     }
+    first_layer.set_values(values);
 
-    for (int index = 0; index < 10; index++)
+    std::vector<double> activation = output_layer.activate_all_neurons();
+
+    for (int index = 0; index < activation.size(); index++)
     {
-        std::cout << index << ": " << output_layer.at(index)->activation() << std::endl;
+        std::cout << index << ": " << activation.at(index) << std::endl;
     }
 
     free(training_labels);
