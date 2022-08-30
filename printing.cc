@@ -1,6 +1,5 @@
 #include <string>
 #include <iostream>
-#include <random>
 
 std::string convert_to_char(int value)
 {
@@ -34,13 +33,4 @@ void print_image(uint8_t *training_labels, uint8_t **training_images, int index)
         std::cout << line << std::endl;
     }
     std::cout << "Label: " << (int)training_labels[index] << std::endl;
-}
-
-void print_random_image(int total_count, uint8_t *training_labels, uint8_t **training_images)
-{
-    std::random_device rand_dev;
-    std::mt19937 generator(rand_dev());
-    std::uniform_int_distribution<int> distr(0, total_count);
-
-    print_image(training_labels, training_images, distr(generator));
 }

@@ -2,6 +2,7 @@
 #define LAYER_H
 
 #include <vector>
+#include <random>
 #include "neuron.h"
 
 enum LayerType {

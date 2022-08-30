@@ -1,13 +1,15 @@
 #include "neuron.h"
 #include "connection.h"
 #include <algorithm>
+#include <iostream>
+#include "random.cc"
 
 Neuron::Neuron()
 {
-    has_to_be_updated = true;
+    this->has_to_be_updated = true;
 }
 
-double Neuron::activation()
+double Neuron::activation(bool perform_relu = true)
 {
     if (!this->has_to_be_updated)
     {
@@ -20,7 +22,7 @@ double Neuron::activation()
     {
         sum += connection.source->activation() * connection.weight;
     }
-    double activation = std::max(sum - this->bias, 0.0);
+    double activation = perform_relu ? std::max(sum - this->bias, 0.0) : sum - this->bias;
     this->cached_value = activation;
     this->has_to_be_updated = false;
 
@@ -40,11 +42,14 @@ void Neuron::set_weight(int index, double weight)
 void Neuron::create_connections(std::vector<Neuron *> upstream_neurons)
 {
     this->inputs.clear();
+    int index = 0;
     for (auto upstream: upstream_neurons)
     {
         Connection new_connection = Connection();
         new_connection.source = upstream;
-        new_connection.weight = 1.0;
+        // Init weights as random
+        new_connection.weight = get_next_random_weight();
+        // std::cout << ++index << ": " << new_connection.weight << std::endl;
         this->inputs.push_back(new_connection);
     }
 }

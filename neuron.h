@@ -5,7 +5,6 @@
 #include <iostream>
 #include <vector>
 
-
 class Neuron {
     private:
         double bias;
@@ -15,7 +14,7 @@ class Neuron {
         bool frozen;
     public:
         Neuron();
-        double activation();
+        double activation(bool perform_relu);
         void set_bias(double bias);
         void set_weight(int index, double weight);
         void create_connections(std::vector<Neuron *> upstream_neurons);

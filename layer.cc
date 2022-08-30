@@ -1,15 +1,16 @@
 #include <vector>
 #include <cmath>
 #include <algorithm>
+#include <random>
 #include "layer.h"
 
-Layer::Layer(int size, LayerType type)
+Layer::Layer(int size, LayerType type) 
 {
     this->type = type;
     for (int index = 0; index < size; index++)
     {
         Neuron *n = new Neuron();
-        n->set_bias(1.0);
+        n->set_bias(0.0);
         this->neurons.push_back(n);
     }
 }
@@ -32,7 +33,7 @@ std::vector<double> Layer::activate_all_neurons()
     std::vector<double> result;
     for (auto neuron: this->neurons)
     {
-        result.push_back(neuron->activation());
+        result.push_back(neuron->activation(this->type == relu));
     }
     
     if (this->type == softmax) {

@@ -4,16 +4,21 @@
 #include "data_loading.cc"
 #include "neuron.cc"
 #include "layer.cc"
+#include "random.cc"
 
 int main(int _argc, char **_argv)
 {
     std::cout << "Booting up..." << std::endl;
-    // hack as I have to refactor the count of files loading
-    int total_count = 6000;
 
+    // hack as I have to refactor the count of files loading
+    const int total_count = 6000;
+    std::uniform_int_distribution<int> image_distribution(0, total_count);
+    
+    const int image_index = image_distribution(generator);
+    
     uint8_t *training_labels = read_training_labels();
     uint8_t **training_images = read_training_images();
-    print_random_image(total_count, training_labels, training_images);
+    print_image(training_labels, training_images, image_index);
 
     // Create input layer of the network
     auto first_layer = Layer(28 * 28, relu);
@@ -29,8 +34,8 @@ int main(int _argc, char **_argv)
     std::vector<double> values;
     for (int index = 0; index < 28 * 28; index++)
     {
-        std::cout << "fixing " << (double)test_values[index] << std::endl;
-        values.push_back(test_values[index]);
+        // Scale values to 255
+        values.push_back(test_values[index] / 255);
     }
     first_layer.set_values(values);
 
