@@ -13,13 +13,13 @@ public:
     std::vector<Layer> layers;
     MLP(std::vector<size_t> layer_sizes)
     {
-        layers = std::vector<LayerV2>();
+        layers = std::vector<Layer>();
         layers.reserve(layer_sizes.size());
 
         for (auto index = 0; index < layer_sizes.size(); index++)
         {
             // inputs are previous layers number of nodes
-            layers.push_back(LayerV2(layer_sizes[index], layer_sizes[std::max(index - 1, 0)]));
+            layers.push_back(Layer(layer_sizes[index], layer_sizes[std::max(index - 1, 0)]));
         }
     }
 
