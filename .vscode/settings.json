@@ -70,6 +70,8 @@
         "iomanip": "cpp",
         "stack": "cpp",
         "numeric": "cpp",
-        "random": "cpp"
+        "random": "cpp",
+        "__tree": "cpp",
+        "set": "cpp"
     }
 }

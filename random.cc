@@ -5,7 +5,7 @@
 std::random_device rand_dev;
 std::mt19937 generator(rand_dev());
 
-std::uniform_real_distribution<double> weight_distribution(0, 1);
+std::uniform_real_distribution<double> weight_distribution(-1, 1);
 
 double get_next_random_weight()
 {
