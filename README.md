@@ -1,5 +1,8 @@
 # CPP Grad
 
+![image](https://user-images.githubusercontent.com/6087389/195730925-d15f97d9-4ce6-4823-aec7-52585d129660.png)
+
+
 A simple MLP written in CPP with shared pointers and implements ADD, MUL and RELU operations in under 500 lines.
 
 Inspiration has been
