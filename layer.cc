@@ -1,64 +1,49 @@
+#ifndef LAYER_CC
+#define LAYER_CC
+
 #include <vector>
-#include <cmath>
-#include <algorithm>
-#include <random>
-#include "layer.h"
+#include "value.cc"
+#include "neuron.cc"
+#include "parameter.cc"
 
-Layer::Layer(int size, LayerType type) 
+class Layer : BaseParameterClass
 {
-    this->type = type;
-    for (int index = 0; index < size; index++)
+private:
+public:
+    std::vector<Neuron> neurons;
+    Layer(size_t n_neurons, size_t n_inputs)
     {
-        Neuron *n = new Neuron();
-        n->set_bias(0.0);
-        this->neurons.push_back(n);
+        neurons = std::vector<Neuron>();
+        std::generate_n(std::back_inserter(neurons), n_neurons, [n_inputs]
+                        { return Neuron(n_inputs); });
     }
-}
 
-std::vector<Neuron *> Layer::get_neurons()
-{
-    return this->neurons;
-}
-
-void Layer::fully_connect(Layer previous)
-{
-    for (auto neuron: this->neurons)
+    std::vector<ValuePtr> run(std::vector<ValuePtr> inputs)
     {
-        neuron->create_connections(previous.get_neurons());
-    }
-}
-
-std::vector<double> Layer::activate_all_neurons()
-{
-    std::vector<double> result;
-    for (auto neuron: this->neurons)
-    {
-        result.push_back(neuron->activation(this->type == relu));
-    }
-    
-    if (this->type == softmax) {
-        double sum = 0.0;
-        double max_value = 0.0;
-        for (auto value:result) {
-            max_value = std::max(value, 0.0);
+        auto results = std::vector<ValuePtr>();
+        results.reserve(this->neurons.size());
+        for (auto neuron : this->neurons)
+        {
+            results.push_back(neuron.run(inputs));
         }
+        return results;
+    }
 
-        for (auto value: result) {
-            sum += exp(value/max_value);
-        }
-
-        for (int index = 0; index < result.size(); index++) {
-            result[index] = exp(result.at(index)/max_value) / sum;
+    void zero_grad() override
+    {
+        for (auto neuron : this->neurons)
+        {
+            neuron.zero_grad();
         }
     }
 
-    return result;
-}
-
-void Layer::set_values(std::vector<double> values)
-{
-    for (int index = 0; index < values.size(); index++)
+    void update_params(double alpha) override
     {
-        this->neurons.at(index)->fix_value(values.at(index));
+        for (auto neuron : this->neurons)
+        {
+            neuron.update_params(alpha);
+        }
     }
-}
+};
+
+#endif
